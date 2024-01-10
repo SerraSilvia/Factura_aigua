@@ -35,7 +35,6 @@ fun consum(): Double {
 
 fun mantenimentPreu (preuTotal:Double ):Double{
     val manteniment: Double= 6.0
-    var preuTotal = 0
     var preuAmbManteniment= manteniment+preuTotal
 
     return preuAmbManteniment
@@ -88,13 +87,9 @@ fun preuAmbBonoSocial(bonoSocial:Boolean, preuTotal: Double):Double{
 fun main() {
     benvinguda()
     var preuTotalFactura = consum()
+    var preuTotalFacturaAmbDescompteFamilia= preuAmbDescompte()
     println("El preu del consum de la teva vivenda és: $preuTotalFactura")
-
-    var preuTotalDescompteTipusFamilia= descomptePerFamilia()
-
-    println("El preu de la factura amb el descompte de familia és de $preuTotalDescompteTipusFamilia")
-
-
+    println("El preu de la factura amb el descompte de familia és de $preuTotalFacturaAmbDescompteFamilia")
     println("Preu total amb manteniment: ${mantenimentPreu(preuTotalFactura)}")
 }
 
