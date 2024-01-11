@@ -1,95 +1,116 @@
 package org.example
 
-fun benvinguda(){
-    println ("$BLUE_BOLD BENVINGUT AL CALCUL DE LA FACTURA DE L'AIGUA $RESET")
+fun benvinguda() {
+    println("$BLUE_BOLD BENVINGUT AL CALCUL DE LA FACTURA DE L'AIGUA $RESET")
 }
 
-fun consum(): Double {
-    var consumUsuari: Int
+fun consum(): Pair<Double, Int> {
+    val preuConsumNormal: Double = 0.15
+    val preuConsumMaxim: Double = 0.30
 
-    do {
-        println("Si us plau indiqui el consum de litres d'aigua de la seva vivenda ")
-        consumUsuari = readLine()?.toIntOrNull() ?: 0
-        val preuConsumMinim: Double = 0.10
-        val preuConsumNormal: Double = 0.15
-        val preuConsumMaxim: Double = 0.30
-        var preuTotal = 0.0
+    /* Pedimos el consum del usuari y comproben que el consum es un nombre */
+    val consumUsuari =
+        readInt(
+            "Si us plau indiqui el consum de litres d'aigua de la seva vivenda",
+            "Ingressi un número vàlid"
+        )
 
-        if (consumUsuari <= 50) {
-            preuTotal = consumUsuari.toDouble() * preuConsumMinim
-        } else if (consumUsuari >= 51 && consumUsuari <= 200) {
-            preuTotal = consumUsuari.toDouble() * preuConsumNormal
-        } else if (consumUsuari > 201 && consumUsuari < 500) {
-            preuTotal = consumUsuari.toDouble() * preuConsumMaxim
-        } else {
-            println("Ha superat el límit, contacti amb nosaltres al telèfon 93-9999999 per pagar l'import amb un suplement")
+    if (consumUsuari in 50..200)
+        return Pair((consumUsuari * preuConsumNormal), consumUsuari)
+
+    if (consumUsuari > 200)
+        return Pair((consumUsuari * preuConsumMaxim), consumUsuari)
+
+    return Pair(0.0, consumUsuari)
+}
+
+fun descomptePerFamilia(consum: Double): Double {
+    println("Indiqui si té descompte per familia nombrosa o monomarental")
+    println("1- Familia Nombrosa")
+    println("2- Familia Monomarental")
+    println("3- No")
+
+    var opcioUsuari = readln().toInt()
+
+    when (opcioUsuari) {
+        1 -> {
+            return (0.50 * consum)
         }
 
-        println("El seu consum de: $consumUsuari que té un cost de : $preuTotal")
-        return preuTotal
+        2 -> {
+            println("Indiqui els fills que conviuen a la vivenda")
+            var fills = readln().toInt()
 
-    } while (consumUsuari < 0 || consumUsuari > 500)
-    println("Ingressi un número vàlid")
-    return 0.0
-}
-
-fun mantenimentPreu (preuTotal:Double ):Double{
-    val manteniment: Double= 6.0
-    var preuAmbManteniment= manteniment+preuTotal
-
-    return preuAmbManteniment
-}
-
-fun descomptePerFamilia(preuTotal: Double, ):Double{
-    do {
-        println("Indiqui si té descompte per familia nombrosa o monoparental")
-        println("1- Familia Nombrosa")
-        println("2- Familia Monoparental")
-        println("3- No té descomptes")
-
-        var opcioUsuari = readln().toInt()
-
-        println("Indiqui els progenitors que conviuen a la vivenda")
-        var progenitors= readln().toInt()
-        println("Indiqui els fills que conviuen a la vivenda")
-        var fills= readln().toInt()
-        var habitantsTotalsVivenda=0
-
-        var preuAmbDescompte= 0.0
-
-        if(opcioUsuari==1 && progenitors==2 && fills>=3){
-            preuAmbDescompte= (preuTotal*10)/5
-            println("La familia nombrosa té un descompte del 50%. El seu import és de $preuAmbDescompte")
-
-        }else if (opcioUsuari==2 && progenitors==1 && fills>=1){
-            preuAmbDescompte= (preuTotal*10)/habitantsTotalsVivenda
-            println("La familia monoparental té un descompte del 10% per habitant. El seu import és de $preuAmbDescompte")
-                //TODO aplicar un maxim del 50%
-        }else{
-            println("No hi ha descomptes a aplicar, el seu preu és de: $preuTotal")
+            if (((fills + 1) * 0.10) > 0.50) {
+                return  (0.50 * consum)
+            } else {
+                return ((fills + 1) * 0.10) * consum
+            }
         }
 
-        return preuAmbDescompte
-
-    }while (opcioUsuari<0 || opcioUsuari>4)
-}
-
-fun preuAmbBonoSocial(bonoSocial:Boolean, preuTotal: Double):Double{
-    println("Té un bono social a aplicar?")
-    println("s- si, n- no")
-    val teBonoSocial = readln().lowercase()
-
-        if (teBonoSocial== "s") return (preuTotal*80)/10
-
-        return preuTotal
+        else -> return 0.0
+    }
 
 }
+
+fun descompteBonoSocial(preuPerConsum: Double): Pair<Double, Double> {
+    val teBonoSocial = readBoolean("Té un bono social a aplicar? s - n", "Error")
+
+    if (teBonoSocial) return Pair((preuPerConsum * 0.80), 3.0)
+
+    return Pair(0.0, 0.0)
+}
+
+fun mostrarFactura(
+    consum: Int,
+    preuConsum: Double,
+    preuFixe: Double,
+    descompteConsum: Double,
+    descompteFixe: Double,
+    totalFactura: Double
+) {
+    println(" -- Factura Aigua -- ")
+    println(" | Consum aigua: ${consum}L               |")
+    println(" | Preu consum aigua: ${preuConsum}€      |")
+    println(" | Descompte consum: -${descompteConsum}€ |")
+    println(" | -----------------------------------    |")
+    println(" | Total preu consum: ${preuConsum - descompteConsum}€ |")
+    println(" | -----------------------------------    |")
+    println(" | Preu fixe manteniment: ${preuFixe}€ |")
+    println(" | Descompte preu fixe: -${descompteFixe}€ |")
+    println(" | -----------------------------------     |")
+    println(" | Total preu fixe: ${preuFixe - descompteFixe}€ |")
+    println(" | -----------------------------------     |")
+    println(" | Total a pagar: ${totalFactura}€         |")
+}
+
 fun main() {
+    val preuFixeManteniment: Double = 6.0
+    val totalFactura: Double
+
     benvinguda()
-    var preuTotalFactura = consum()
-    var preuTotalFacturaAmbDescompteFamilia= preuAmbDescompte()
-    println("El preu del consum de la teva vivenda és: $preuTotalFactura")
-    println("El preu de la factura amb el descompte de familia és de $preuTotalFacturaAmbDescompteFamilia")
-    println("Preu total amb manteniment: ${mantenimentPreu(preuTotalFactura)}")
+    var (preuPerConsum, consum) = consum()
+
+    /* Calcula descompte per familia nombrosa*/
+    var descomptePerFamilia = descomptePerFamilia(preuPerConsum)
+
+    /* Calcula descompte per Bono Social */
+    var (descomptePerBonoSocialPerConsum, descomptPreuFixe) = descompteBonoSocial(preuPerConsum)
+
+    /* Comprobem si el descompte per familia es mayor que el descompte per bono social */
+    if (descomptePerFamilia > (descomptePerBonoSocialPerConsum + descomptPreuFixe)) {
+        totalFactura = (preuPerConsum - descomptePerFamilia) + preuFixeManteniment
+        mostrarFactura(consum, preuPerConsum, preuFixeManteniment, descomptePerFamilia, 0.0, totalFactura)
+    } else {
+        totalFactura = (preuPerConsum - descomptePerBonoSocialPerConsum) + (preuFixeManteniment - descomptPreuFixe)
+        mostrarFactura(
+            consum,
+            preuPerConsum,
+            preuFixeManteniment,
+            descomptePerBonoSocialPerConsum,
+            descomptPreuFixe,
+            totalFactura
+        )
+    }
 }
 
