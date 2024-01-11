@@ -5,8 +5,8 @@ fun benvinguda() {
 }
 
 fun consum(): Pair<Double, Int> {
-    val preuConsumNormal: Double = 0.15
-    val preuConsumMaxim: Double = 0.30
+    val preuConsumNormal = 0.15
+    val preuConsumMaxim = 0.30
 
     /* Pedimos el consum del usuari y comproben que el consum es un nombre */
     val consumUsuari =
@@ -30,7 +30,7 @@ fun descomptePerFamilia(consum: Double): Double {
     println("2- Familia Monomarental")
     println("3- No")
 
-    var opcioUsuari = readln().toInt()
+    val opcioUsuari = readln().toInt()
 
     when (opcioUsuari) {
         1 -> {
@@ -39,7 +39,7 @@ fun descomptePerFamilia(consum: Double): Double {
 
         2 -> {
             println("Indiqui els fills que conviuen a la vivenda")
-            var fills = readln().toInt()
+            val fills = readln().toInt()
 
             if (((fills + 1) * 0.10) > 0.50) {
                 return  (0.50 * consum)
@@ -85,17 +85,17 @@ fun mostrarFactura(
 }
 
 fun main() {
-    val preuFixeManteniment: Double = 6.0
+    val preuFixeManteniment = 6.0
     val totalFactura: Double
 
     benvinguda()
-    var (preuPerConsum, consum) = consum()
+    val (preuPerConsum, consum) = consum()
 
     /* Calcula descompte per familia nombrosa*/
-    var descomptePerFamilia = descomptePerFamilia(preuPerConsum)
+    val descomptePerFamilia = descomptePerFamilia(preuPerConsum)
 
     /* Calcula descompte per Bono Social */
-    var (descomptePerBonoSocialPerConsum, descomptPreuFixe) = descompteBonoSocial(preuPerConsum)
+    val (descomptePerBonoSocialPerConsum, descomptPreuFixe) = descompteBonoSocial(preuPerConsum)
 
     /* Comprobem si el descompte per familia es mayor que el descompte per bono social */
     if (descomptePerFamilia > (descomptePerBonoSocialPerConsum + descomptPreuFixe)) {
